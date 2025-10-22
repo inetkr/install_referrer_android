@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.android.play.core.integrity.IntegrityManagerFactory
 import com.google.android.play.core.integrity.IntegrityTokenRequest
 
-class IntegrityHelper(context: Context) {
+internal class IntegrityHelper(context: Context) {
 
     private val integrityManager = IntegrityManagerFactory.create(context)
 

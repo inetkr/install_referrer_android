@@ -6,7 +6,7 @@ import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.android.installreferrer.api.ReferrerDetails
 
-class ReferrerHelper(private val context: Context) {
+internal class ReferrerHelper(private val context: Context) {
 
     fun getReferrer(callback: (String?) -> Unit) {
         val referrerClient = InstallReferrerClient.newBuilder(context).build()

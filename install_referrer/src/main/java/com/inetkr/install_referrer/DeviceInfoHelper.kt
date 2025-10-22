@@ -29,7 +29,7 @@ data class DeviceInfo(
     val userAgent: String
 )
 
-class DeviceInfoHelper(private val context: Context) {
+internal class DeviceInfoHelper(private val context: Context) {
     fun getDeviceInfo(callback: (DeviceInfo) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val info = getDeviceInfo()

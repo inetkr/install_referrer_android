@@ -18,6 +18,7 @@ class InstallReferrer private constructor(private val context: Context) {
 
     private val prefs = context.getSharedPreferences("ref_prefs", Context.MODE_PRIVATE)
     private val calledKey = "called_install_app"
+    private var debug: Boolean = false
 
     companion object {
         @SuppressLint("StaticFieldLeak")
@@ -32,9 +33,22 @@ class InstallReferrer private constructor(private val context: Context) {
     }
 
     fun initialize(debug: Boolean) {
+        this.debug = debug
+
+        val alreadyCalled = prefs.getBoolean(calledKey, false)
+        if (alreadyCalled) {
+            showDebug("install_referrer_already_called")
+            return
+        }
+
+        loadInstallInfo()
+    }
+
+    fun getVersion(): String = BuildConfig.SDK_VERSION
+
+    private fun loadInstallInfo() {
         try {
             ReferrerHelper(context).getReferrer { referrer ->
-                Log.d("InstallReferrer", "Referrer = $referrer")
                 DeviceInfoHelper(context).getDeviceInfo { deviceInfo ->
                     val rawNonce =
                         "${referrer ?: "temp_id="}&package_name=${deviceInfo.packageName}"
@@ -59,6 +73,7 @@ class InstallReferrer private constructor(private val context: Context) {
                                 "is_reinstall" to deviceInfo.isReinstall
                             )
                             val data = mapOf(
+                                "plugin_version" to getVersion(),
                                 "verify_token" to token,
                                 "data" to installInfo
                             )
@@ -66,18 +81,18 @@ class InstallReferrer private constructor(private val context: Context) {
                                 sendData(data)
                             }
                         } else {
-                            Log.e("InstallReferrer", "Error: $error")
+                            showDebug("Error: $error")
                         }
                     }
                 }
             }
 
         } catch (e: Exception) {
-            Log.e("InstallReferrer", "Error: ${e.message}", e)
+            showDebug("Error: ${e.message}")
         }
     }
 
-    fun sendData(data: Map<String, Any>) {
+    private fun sendData(data: Map<String, Any>) {
         val client = OkHttpClient()
 
         try {
@@ -90,22 +105,26 @@ class InstallReferrer private constructor(private val context: Context) {
                 .post(body)
                 .build()
 
-            Log.d("InstallReferrer", "➡️ Sending: $json")
+            showDebug("➡️ Sending: $json")
 
             val response = client.newCall(request).execute()
 
             val code = response.code
-            val responseBody = response.body?.string()
-            Log.d("InstallReferrer", "⬅️ Response ($code): $responseBody")
+            val responseBody = response.body.string()
+            showDebug("⬅️ Response ($code): $responseBody")
 
             if (code == 200) {
                 prefs.edit { putBoolean(calledKey, true) }
             } else {
-                Log.w("InstallReferrer", "install_app failed: $code $responseBody")
+                showDebug("install_app failed: $code $responseBody")
             }
 
         } catch (e: Exception) {
-            Log.e("InstallReferrer", "sendData error", e)
+            showDebug("sendData error ${e.message}")
         }
+    }
+
+    private fun showDebug(message: String) {
+        Log.d("[InstallReferrer]", message)
     }
 }
