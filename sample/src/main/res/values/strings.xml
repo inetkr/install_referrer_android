@@ -1,3 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Install Referrer Sample</string>
+    <string name="package_name">PACKAGE_NAME</string>
+    <string name="referral_test">REFERRAL TEST</string>
+    <string name="sample_app">SAMPLE_APP</string>
 </resources>
