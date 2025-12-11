@@ -1,5 +1,7 @@
 # install_referrer_android
 
+[![](https://jitpack.io/v/inetkr/install_referrer_android.svg)](https://jitpack.io/#inetkr/install_referrer_android)
+
 A lightweight Android library for retrieving the **Google Play Install Referrer**. Supports both **Kotlin** and **Java**, and is distributed via **JitPack**.
 
 ---
