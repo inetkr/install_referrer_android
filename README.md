@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
 ## 📚 API
 
-### `InstallReferrerHelper.getReferrer(Context context, ReferrerCallback callback)`
+### `InstallReferrer.getInstance(this).initialize()`
 
 Retrieves install referrer information from the **Google Play Install Referrer API**.
 
